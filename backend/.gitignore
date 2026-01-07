@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+contract_analyzer.db
+uploads/
+*.pdf
+.DS_Store
