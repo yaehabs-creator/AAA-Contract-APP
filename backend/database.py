@@ -28,7 +28,8 @@ def init_db():
     This should be called on application startup.
     """
     from models import Clause  # Import here to avoid circular imports
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.drop_all(bind=engine)  # Drop all existing tables
+    Base.metadata.create_all(bind=engine)  # Create tables with current schema
 
 def get_db():
     """

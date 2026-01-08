@@ -9,6 +9,11 @@ from fastapi.responses import JSONResponse
 import uvicorn
 from typing import List, Optional
 import os
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 from database import init_db
 from models import Clause, ClauseType
@@ -98,6 +103,8 @@ async def get_clauses(
         )
         return {"clauses": clauses}
     except Exception as e:
+        logger.error(f"Error fetching clauses: {str(e)}")
+        logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Error fetching clauses: {str(e)}")
 
 # Get a single clause by ID

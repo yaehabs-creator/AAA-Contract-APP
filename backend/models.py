@@ -38,6 +38,9 @@ class Clause(Base):
     # Original text (MUST NOT be modified)
     full_text_original = Column(Text, nullable=False)
     
+    # Cleaned text (spacing fixes only, wording unchanged)
+    full_text_cleaned = Column(Text, nullable=True)
+    
     # Classification
     clause_type = Column(SQLEnum(ClauseType), default=ClauseType.UNKNOWN, index=True)
     
@@ -55,6 +58,7 @@ class Clause(Base):
             "clause_title": self.clause_title,
             "section_name": self.section_name,
             "full_text_original": self.full_text_original,
+            "full_text_cleaned": self.full_text_cleaned,
             "clause_type": self.clause_type.value if self.clause_type else None,
             "analysis_summary": self.analysis_summary,
             "risks_on_employer": self.risks_on_employer,
@@ -73,6 +77,7 @@ class Clause(Base):
         risks_on_employer: Optional[str] = None,
         time_frames_raw: Optional[str] = None,
         time_frames_explained: Optional[str] = None,
+        full_text_cleaned: Optional[str] = None,
     ) -> "Clause":
         """Create a new clause in the database"""
         db = SessionLocal()
@@ -81,6 +86,7 @@ class Clause(Base):
                 clause_number=clause_number,
                 clause_title=clause_title,
                 full_text_original=full_text_original,
+                full_text_cleaned=full_text_cleaned,
                 section_name=section_name,
                 clause_type=clause_type,
                 analysis_summary=analysis_summary,
@@ -117,11 +123,11 @@ class Clause(Base):
             if search_term:
                 search = f"%{search_term}%"
                 query = query.filter(
-                    (Clause.clause_number.contains(search_term)) |
-                    (Clause.clause_title.contains(search_term)) |
-                    (Clause.full_text_original.contains(search_term)) |
-                    (Clause.analysis_summary.contains(search_term)) |
-                    (Clause.risks_on_employer.contains(search_term))
+                    (Clause.clause_number.like(search)) |
+                    (Clause.clause_title.like(search)) |
+                    (Clause.full_text_original.like(search)) |
+                    (Clause.analysis_summary.like(search)) |
+                    (Clause.risks_on_employer.like(search))
                 )
             
             clauses = query.all()

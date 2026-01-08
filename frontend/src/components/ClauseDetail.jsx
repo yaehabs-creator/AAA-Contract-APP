@@ -32,9 +32,18 @@ function ClauseDetail({ clause }) {
       <div className="detail-section">
         <h4>Original Clause Text (unchanged from contract)</h4>
         <div className="original-text">
-          {clause.full_text_original || 'No text available'}
+          <pre>{clause.full_text_original || 'No text available'}</pre>
         </div>
       </div>
+      
+      {clause.full_text_cleaned && clause.full_text_cleaned !== clause.full_text_original && (
+        <div className="detail-section">
+          <h4>Cleaned Text (spacing fixes only)</h4>
+          <div className="cleaned-text">
+            <pre>{clause.full_text_cleaned}</pre>
+          </div>
+        </div>
+      )}
 
       {clause.analysis_summary && (
         <div className="detail-section">
@@ -51,7 +60,7 @@ function ClauseDetail({ clause }) {
           <div className="detail-content risk-content">
             {clause.risks_on_employer.split('\n\n').map((risk, idx) => (
               <div key={idx} className="risk-item">
-                {risk}
+                <pre className="risk-pre">{risk}</pre>
               </div>
             ))}
           </div>

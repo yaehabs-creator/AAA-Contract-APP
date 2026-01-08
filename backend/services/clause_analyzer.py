@@ -7,7 +7,7 @@ Analyzes clauses for:
 """
 
 import re
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 
 class ClauseAnalyzer:
@@ -142,35 +142,109 @@ class ClauseAnalyzer:
         
         return explanation.strip()
     
-    def analyze_risks_for_employer(self, clause_text: str) -> Optional[str]:
+    def analyze_risks_for_employer(
+        self, 
+        clause_text: str,
+        clause_number: Optional[str] = None,
+        clause_title: Optional[str] = None
+    ) -> Optional[str]:
         """
         Analyze clause text for risks on the employer.
         
         Returns:
-            String summary of risks, or None if no significant risks found
+            Professionally formatted string summary of risks, or None if no significant risks found
         """
         clause_lower = clause_text.lower()
-        risks = []
+        risks_found = []
+        
+        # Collect unique risk types with their contexts
+        risk_types_found = {}
         
         for keyword_phrase, risk_type in self.RISK_KEYWORDS:
             if keyword_phrase in clause_lower:
                 # Get context around the keyword (sentence)
                 pattern = re.compile(
-                    rf'.{{0,100}}{re.escape(keyword_phrase)}.{{0,100}}',
+                    rf'.{{0,150}}{re.escape(keyword_phrase)}.{{0,150}}',
                     re.IGNORECASE | re.DOTALL
                 )
                 matches = list(pattern.finditer(clause_text))
                 
                 if matches:
                     context = matches[0].group(0).strip()
-                    risks.append(f"Risk ({risk_type}): {context[:200]}...")
+                    # Clean up context: remove excessive whitespace
+                    context = re.sub(r'\s+', ' ', context)
+                    context = context[:300]  # Limit context length
+                    
+                    # Group by risk type
+                    if risk_type not in risk_types_found:
+                        risk_types_found[risk_type] = []
+                    risk_types_found[risk_type].append(context)
         
-        if risks:
-            # Return summary, avoiding duplicates
-            unique_risks = list(dict.fromkeys(risks))  # Preserves order, removes duplicates
-            return "\n\n".join(unique_risks[:5])  # Limit to 5 risks
+        if not risk_types_found:
+            return None
         
-        return None
+        # Format risks professionally
+        return self.format_risk_output(clause_number, clause_title, risk_types_found)
+    
+    def format_risk_output(
+        self,
+        clause_number: Optional[str],
+        clause_title: Optional[str],
+        risk_types: Dict[str, List[str]]
+    ) -> str:
+        """
+        Format risk output in a professional structure.
+        
+        Format:
+        ⚠️ Risk Type Name
+        Clause X.X — Clause Title
+        Explanation of the risk...
+        
+        Args:
+            clause_number: The clause number (e.g., "12.6")
+            clause_title: The clause title (e.g., "General Indemnity")
+            risk_types: Dictionary mapping risk type names to list of contexts
+            
+        Returns:
+            Formatted risk string
+        """
+        formatted_risks = []
+        
+        for risk_type, contexts in risk_types.items():
+            # Build header
+            risk_block = f"⚠️ {risk_type.title()}\n"
+            
+            # Add clause reference if available
+            clause_ref_parts = []
+            if clause_number:
+                clause_ref_parts.append(f"Clause {clause_number}")
+            if clause_title:
+                clause_ref_parts.append(clause_title)
+            
+            if clause_ref_parts:
+                risk_block += f"{' — '.join(clause_ref_parts)}\n"
+            
+            # Add explanation from first context
+            if contexts:
+                # Use the first (most relevant) context
+                explanation = contexts[0]
+                # Clean up the explanation
+                explanation = explanation.strip()
+                # If explanation is too long, summarize
+                if len(explanation) > 200:
+                    # Try to find a sentence ending
+                    sentences = re.split(r'[.!?]+', explanation)
+                    if len(sentences) > 1:
+                        explanation = sentences[0] + "."
+                    else:
+                        explanation = explanation[:200] + "..."
+                
+                risk_block += f"{explanation}\n"
+            
+            formatted_risks.append(risk_block.strip())
+        
+        # Join all risk blocks with double line break
+        return "\n\n".join(formatted_risks[:5])  # Limit to 5 risk types
     
     def analyze_clause(self, clause_text: str) -> str:
         """
