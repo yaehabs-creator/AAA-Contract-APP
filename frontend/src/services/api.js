@@ -45,12 +45,6 @@ export const getComparison = async () => {
   return response.data
 }
 
-// Get risks
-export const getRisks = async () => {
-  const response = await api.get('/api/risks')
-  return response.data
-}
-
 // Get time frames
 export const getTimeFrames = async () => {
   const response = await api.get('/api/time-frames')

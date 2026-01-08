@@ -6,10 +6,10 @@ import TabNavigation from './components/TabNavigation'
 import ClauseList from './components/ClauseList'
 import ClauseDetail from './components/ClauseDetail'
 import ComparisonView from './components/ComparisonView'
-import { getClauses, getComparison, getRisks, getTimeFrames } from './services/api'
+import { getClauses, getComparison, getTimeFrames } from './services/api'
 
 function App() {
-  const [activeTab, setActiveTab] = useState('all')
+  const [activeTab, setActiveTab] = useState('general')
   const [searchTerm, setSearchTerm] = useState('')
   const [clauses, setClauses] = useState([])
   const [selectedClause, setSelectedClause] = useState(null)
@@ -30,9 +30,6 @@ function App() {
       if (activeTab === 'comparison') {
         data = await getComparison()
         setComparison(data.comparison || [])
-      } else if (activeTab === 'risks') {
-        data = await getRisks()
-        setClauses(data.clauses || [])
       } else if (activeTab === 'timeframes') {
         data = await getTimeFrames()
         setClauses(data.clauses || [])
@@ -53,6 +50,7 @@ function App() {
   const handleUploadComplete = () => {
     setUploading(false)
     setSelectedClause(null)
+    setActiveTab('general')
     // Refresh clauses after upload
     fetchClauses()
   }
@@ -69,7 +67,7 @@ function App() {
     <div className="app">
       {/* Top Bar */}
       <header className="top-bar">
-        <h1 className="app-title">Construction Contract Analyzer</h1>
+        <h1 className="app-title">AAA</h1>
         <SearchBar 
           searchTerm={searchTerm} 
           onSearchChange={setSearchTerm}

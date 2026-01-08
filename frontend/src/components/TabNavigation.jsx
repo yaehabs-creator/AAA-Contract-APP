@@ -3,11 +3,9 @@ import './TabNavigation.css'
 
 function TabNavigation({ activeTab, setActiveTab }) {
   const tabs = [
-    { id: 'all', label: 'All Clauses' },
     { id: 'general', label: 'General Conditions' },
     { id: 'particular', label: 'Particular Conditions' },
     { id: 'comparison', label: 'Comparison' },
-    { id: 'risks', label: 'Risks on Employer' },
     { id: 'timeframes', label: 'Time Frames & Deadlines' },
   ]
 

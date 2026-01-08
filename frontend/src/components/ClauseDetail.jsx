@@ -54,19 +54,6 @@ function ClauseDetail({ clause }) {
         </div>
       )}
 
-      {clause.risks_on_employer && (
-        <div className="detail-section risk-section">
-          <h4>⚠️ Risks on Employer</h4>
-          <div className="detail-content risk-content">
-            {clause.risks_on_employer.split('\n\n').map((risk, idx) => (
-              <div key={idx} className="risk-item">
-                <pre className="risk-pre">{risk}</pre>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {clause.time_frames_raw && (
         <div className="detail-section time-section">
           <h4>⏱️ Time Frames & Deadlines</h4>

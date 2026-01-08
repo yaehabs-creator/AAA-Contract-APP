@@ -136,18 +136,6 @@ async def get_comparison():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error generating comparison: {str(e)}")
 
-# Get risks on employer
-@app.get("/api/risks")
-async def get_risks():
-    """
-    Get all clauses that have risks on the employer.
-    """
-    try:
-        clauses = Clause.get_by_risk()
-        return {"clauses": clauses}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching risks: {str(e)}")
-
 # Get time frames
 @app.get("/api/time-frames")
 async def get_time_frames():

@@ -34,11 +34,6 @@ function ClauseList({ clauses, activeTab, onClauseSelect, selectedClauseId }) {
               {clause.analysis_summary.substring(0, 150)}...
             </div>
           )}
-          {activeTab === 'risks' && clause.risks_on_employer && (
-            <div className="clause-risks-preview">
-              ⚠️ {clause.risks_on_employer.substring(0, 100)}...
-            </div>
-          )}
           {activeTab === 'timeframes' && clause.time_frames_raw && (
             <div className="clause-timeframes-preview">
               ⏱️ {clause.time_frames_raw.substring(0, 100)}...
